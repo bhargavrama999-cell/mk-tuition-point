@@ -121,7 +121,7 @@ const bulkUploadQuestions = async (req, res) => {
     const assessmentId = req.params.assessmentId;
 
     try {
-      // Use xlsx to read both CSV and Excel files
+      // Use xlsx to read both CSV and Excel files from the temporary path allocated by multer
       const workbook = xlsx.readFile(req.file.path);
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];

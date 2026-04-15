@@ -1,31 +1,15 @@
 const multer = require('multer');
 const path = require('path');
+const os = require('os');
 const fs = require('fs');
 
-// Ensure upload directories exist
-const setupUploadDirs = () => {
-  const dirs = ['uploads/images', 'uploads/csv', 'uploads/pdf'];
-  dirs.forEach(dir => {
-    const dirPath = path.join(__dirname, '..', dir);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-  });
-};
-
-setupUploadDirs();
+// Use Vercel's writable temporary directory (/tmp) instead of local 'uploads' folder
+const tmpDir = os.tmpdir();
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    if (file.mimetype === 'text/csv' || file.originalname.endsWith('.csv')) {
-      cb(null, 'uploads/csv/');
-    } else if (file.mimetype === 'application/pdf') {
-      cb(null, 'uploads/pdf/');
-    } else if (file.mimetype.startsWith('image/')) {
-      cb(null, 'uploads/images/');
-    } else {
-      cb(null, 'uploads/');
-    }
+    // Write all uploaded files to OS temp directory which is writable on Vercel
+    cb(null, tmpDir);
   },
   filename(req, file, cb) {
     cb(
@@ -37,8 +21,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
   fileFilter: function (req, file, cb) {
-    const filetypes = /jpeg|jpg|png|pdf|csv/;
+    const filetypes = /jpeg|jpg|png|pdf|csv|xlsx|xls/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
     );
