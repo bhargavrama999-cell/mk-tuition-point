@@ -10,9 +10,13 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['https://chimerical-marzipan-93ed15.netlify.app', 'http://localhost:5173'],
+  origin: [
+    'https://chimerical-marzipan-93ed15.netlify.app',
+    'http://localhost:5173',
+    'https://mk-tuition-frontend.vercel.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   credentials: true
 }));
 app.use(express.json());
